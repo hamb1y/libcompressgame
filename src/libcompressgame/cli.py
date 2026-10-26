@@ -17,7 +17,7 @@ from .provenance import discover
 
 
 def main(argv=None):
-    parser = argparse.ArgumentParser(description='Pack a game directory with eXdupe → OpenZL → BLAKE3 → optional encryption')
+    parser = argparse.ArgumentParser(description='Pack a game directory with eXdupe -> OpenZL -> BLAKE3 -> optional encryption')
     parser.add_argument('--version', action='version', version=__version__)
     subs = parser.add_subparsers(dest='command', required=True)
     create = subs.add_parser('pack', help='Build a host-native self-extracting executable')

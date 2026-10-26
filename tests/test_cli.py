@@ -1,4 +1,5 @@
 from pathlib import Path
+import os
 import subprocess
 import sys
 
@@ -24,3 +25,13 @@ def test_atomic_publication_never_replaces(tmp_path):
         publish_directory(source, out)
     assert source.is_dir()
     assert out.is_dir()
+
+
+def test_redirected_help_with_windows_legacy_encoding():
+    env = dict(os.environ, PYTHONIOENCODING='cp1252')
+    for command in [[], ['pack'], ['unpack'], ['verify'], ['info'], ['doctor']]:
+        result = subprocess.run([sys.executable, '-m', 'libcompressgame', *command, '--help'],
+                                env=env, capture_output=True, timeout=30)
+        assert result.returncode == 0, result.stderr.decode('cp1252', errors='replace')
+        assert b'usage:' in result.stdout
+        assert b'UnicodeEncodeError' not in result.stderr
