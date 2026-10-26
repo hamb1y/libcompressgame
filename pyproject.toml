@@ -1,0 +1,28 @@
+[build-system]
+requires = ["setuptools>=75"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "libcompressgame"
+version = "0.1.0"
+description = "Game directory packing with eXdupe, OpenZL, BLAKE3 and encrypted native self-extractors"
+readme = "README.md"
+requires-python = ">=3.11"
+license = {text = "BSD-3-Clause"}
+dependencies = ["blake3>=1.0.8,<2", "cryptography>=46,<51"]
+
+[project.optional-dependencies]
+build = ["pyinstaller>=6.16,<7"]
+test = ["pytest>=8,<10"]
+
+[project.scripts]
+libcompressgame = "libcompressgame.cli:main"
+lcg = "libcompressgame.cli:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.pytest.ini_options]
+pythonpath = ["src"]
+testpaths = ["tests"]
+markers = ["integration: requires genuine eXdupe and OpenZL executables", "sfx: builds and executes a native self-extractor"]

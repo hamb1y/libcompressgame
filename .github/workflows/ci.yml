@@ -1,0 +1,47 @@
+name: Native codecs and self-extractors
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  native:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-24.04, windows-2022]
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Install Python package and build/test dependencies
+        run: python -m pip install -e ".[build,test]"
+      - name: Build pinned genuine codecs from upstream source
+        run: python scripts/build_tools.py --output tools --jobs 2
+      - name: Set codec paths (Linux)
+        if: runner.os == 'Linux'
+        shell: bash
+        run: |
+          echo "LCG_EXDUPE=$PWD/tools/bin/exdupe" >> "$GITHUB_ENV"
+          echo "LCG_ZLI=$PWD/tools/bin/zli" >> "$GITHUB_ENV"
+      - name: Set codec paths (Windows)
+        if: runner.os == 'Windows'
+        shell: pwsh
+        run: |
+          "LCG_EXDUPE=$pwd/tools/bin/exdupe.exe" | Out-File -FilePath $env:GITHUB_ENV -Append
+          "LCG_ZLI=$pwd/tools/bin/zli.exe" | Out-File -FilePath $env:GITHUB_ENV -Append
+      - name: Verify versions and run genuine codec and native SFX round trips
+        env:
+          LCG_TEST_SFX: '1'
+        run: python -m pytest -v -s --junitxml=test-results.xml
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: validation-${{ runner.os }}
+          path: |
+            test-results.xml
+            tools/pins.json
