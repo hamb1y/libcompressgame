@@ -1,4 +1,23 @@
-# Validation evidence — 2026-10-25
+# Validation evidence — current run 2026-10-26
+
+Fresh network-enabled `scripts/build_tools.py --output tools/production --jobs 8` completed successfully using the pinned real upstream sources and their normal dependencies. The helper produced executable binaries, notices, identity metadata and a 29,201,252-byte complete corresponding-source archive. No offline dependency substitution was used in this run.
+
+A new isolated environment installed the declared maintained PyPI packages: BLAKE3 1.0.11, cryptography 50.0.2, PyInstaller 6.22.3 and pytest 9.1.1; host Python 3.14.8/GCC 16.2.1. It contains no temporary ctypes binding.
+
+```sh
+LCG_EXDUPE="$PWD/tools/production/bin/exdupe" \
+LCG_ZLI="$PWD/tools/production/bin/zli" LCG_TEST_SFX=1 \
+.venv-production/bin/python -m pytest -v -s \
+  --basetemp=/tmp/lcg-production-pytest --junitxml=/tmp/lcg-production-junit.xml
+```
+
+Result: **55 passed in 39.84 seconds, zero skips**, including both plain/encrypted native Linux self-extractors with external Python/codecs absent from PATH.
+
+The normal `lcg pack` flow also built an encrypted Linux executable without manual notice/source flags. The helper's real notice and complete corresponding sources were automatically bundled. Info, notices, verify, extraction and byte-identical source export passed with an empty external-tool PATH. That executable is 83,920,584 bytes, including its source archive. Local artifacts/logs/dependency identities and SHA256 manifest are in ignored `dist/validation-production/`; these are labeled test fixtures.
+
+Remote Linux/Windows CI was launched after publication: https://github.com/hamb1y/libcompressgame/actions/runs/40309358931 . The Ubuntu 24.04 native job passed all 55 tests in 90.75 seconds using Python 3.12.15 and the maintained PyPI packages. Native Windows remains pending until that job completes. The earlier network/package restrictions below describe the previous run only.
+
+## Earlier offline evidence — 2026-10-25
 
 Local host: Linux x86-64, Python 3.12.15, GCC 16.2.1, cryptography 46.0.0, PyInstaller 6.22.3.
 
@@ -40,6 +59,6 @@ The shell cannot reach GitHub or PyPI. Upstream source was transferred through t
 - OpenZL 0.3.0 commit `32246b48faee46807f84183dac4db479089f5445`, genuine upstream zli and serial encoder/decoder. The offline build linked installed Zstd 1.5.7/LZ4 1.10.0 and disabled only the unused optional XGBoost trainer. The maintained build helper also disables that trainer but obtains normal upstream dependency sources.
 - Local Python hashing initially used an external temporary ctypes binding to the official BLAKE3 1.8.2 portable C source. All 35 upstream hash-mode vectors passed, with incremental input and extended output. Final full-suite/SFX tests used an external temporary ctypes binding to installed official `libblake3` **1.8.7**; the same 35 hash vectors passed. These temporary bindings are ignored testing infrastructure and are not shipped or substituted for the declared production dependency.
 
-**Still pending:** installation/integration with the maintained PyPI `blake3` module, execution of the network-dependent source-build helper from a fresh checkout, and native Windows PE builds/execution. CI is configured to perform those checks on Ubuntu 24.04 and Windows 2022 using the real maintained Python package. The repository was archived during this work, preventing publication/CI triggering. No Windows success or passing remote workflow is claimed.
+The maintained PyPI dependency and fresh source-build-helper checks were subsequently completed in the current run above. Native Windows results are recorded there when available. The repository was archived during this earlier run; it has since been unarchived and published.
 
 The new source and native fixture executables are reviewable locally. Fixture binaries contain test game data and test notices and are not production releases. Source/notice discovery metadata records identities and provenance; it is not an upstream publisher signature.

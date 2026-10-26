@@ -1,0 +1,4 @@
+include FORMAT.md VALIDATION.md
+recursive-include scripts *.py
+recursive-include tests *.py
+include .github/workflows/ci.yml

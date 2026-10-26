@@ -11,12 +11,14 @@ The extractor contains Python, both genuine codec executables, the archive and s
 
 ## Install and build the codecs
 
-Requires Python 3.11+, Git, CMake and a C/C++ compiler. The Windows source build uses Visual Studio 2022 with its C++ tools and ClangCL components; Linux needs a compiler with C++20 `std::format` support, static C/C++ runtime libraries for eXdupe, and the usual development tools.
+Start from a cloned repository or an unpacked source distribution, then run the commands below from its root. Requires Python 3.11+, Git, CMake and a C/C++ compiler. The Windows source build uses Visual Studio 2022 with its C++ tools and ClangCL components; Linux needs a compiler with C++20 `std::format` support, static C/C++ runtime libraries for eXdupe, and the usual development tools.
 
 ```sh
-python -m pip install '.[build,test]'
+python -m pip install ".[build,test]"
 python scripts/build_tools.py --output tools --jobs 2
 ```
+
+A published wheel installs the `lcg` CLI; use `python -m pip install "./libcompressgame-0.1.0-py3-none-any.whl[build]"` with a downloaded wheel. The source distribution also includes `scripts/build_tools.py` for building the required codecs. No PyPI publication is assumed.
 
 The build script checks out immutable source commits (including submodules), builds eXdupe and OpenZL's real `zli`, and saves corresponding sources and a notice in `tools/`. It needs network access for upstream repositories and their build dependencies. Tools are not downloaded or executed implicitly while packing or extracting.
 
@@ -86,6 +88,6 @@ LCG_EXDUPE="$PWD/tools/bin/exdupe" LCG_ZLI="$PWD/tools/bin/zli" LCG_TEST_SFX=1 p
 
 For PowerShell set the same three names with `$env:NAME = 'value'` before invoking pytest. Without explicit codec paths, integration tests report **skips**, not success. CI builds pinned real codecs and runs all plain/encrypted directory and native executable round trips on `ubuntu-24.04` and `windows-2022`, recording stage sizes in its logs. A workflow definition is not evidence that either build has passed; inspect the run for the commit you use.
 
-Local validation includes genuine eXdupe/OpenZL round trips and plain/encrypted Linux ELF self-extractors, including unsafe native archive metadata rejection. The local BLAKE3 binding used official upstream C through temporary test infrastructure; integration with the maintained PyPI binding and native Windows execution remain pending CI. See [VALIDATION.md](VALIDATION.md) for exact evidence, measured sizes and limits.
+Local validation includes genuine eXdupe/OpenZL round trips and plain/encrypted Linux ELF self-extractors, including unsafe native archive metadata rejection. The current run uses the maintained PyPI BLAKE3 package and a fresh network-enabled execution of the source-build helper. Native Windows results are recorded in the linked validation evidence when its CI run completes. See [VALIDATION.md](VALIDATION.md) for exact evidence, measured sizes and limits.
 
 Project source is BSD-3-Clause. Redistributing codec/runtime binaries also entails their respective licenses. The build script preserves pinned codec sources and dependency licenses for bundling; supply any additional runtime/dependency notices needed for your distribution with repeated `--notice` and `--source-archive` options. The resulting source archives are included as data and are never automatically extracted or executed.
