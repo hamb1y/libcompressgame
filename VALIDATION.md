@@ -11,11 +11,11 @@ LCG_ZLI="$PWD/tools/production/bin/zli" LCG_TEST_SFX=1 \
   --basetemp=/tmp/lcg-production-pytest --junitxml=/tmp/lcg-production-junit.xml
 ```
 
-Result: **55 passed in 39.84 seconds, zero skips**, including both plain/encrypted native Linux self-extractors with external Python/codecs absent from PATH.
+The first production-dependency run passed all 55 tests in 39.84 seconds. After adding the redirected-CP1252 help regression, the final source passed **56 tests in 55.29 seconds, zero skips**, including both plain/encrypted native Linux self-extractors with external Python/codecs absent from PATH. The final run used `--basetemp=/tmp/lcg-production-final-pytest --junitxml=/tmp/lcg-production-final-junit.xml`; other command arguments are unchanged.
 
 The normal `lcg pack` flow also built an encrypted Linux executable without manual notice/source flags. The helper's real notice and complete corresponding sources were automatically bundled. Info, notices, verify, extraction and byte-identical source export passed with an empty external-tool PATH. That executable is 83,920,584 bytes, including its source archive. Local artifacts/logs/dependency identities and SHA256 manifest are in ignored `dist/validation-production/`; these are labeled test fixtures.
 
-Remote Linux/Windows CI was launched after publication: https://github.com/hamb1y/libcompressgame/actions/runs/40309358931 . The Ubuntu 24.04 native job passed all 55 tests in 90.75 seconds using Python 3.12.15 and the maintained PyPI packages. Native Windows remains pending until that job completes. The earlier network/package restrictions below describe the previous run only.
+Remote Linux/Windows CI was launched after publication: https://github.com/hamb1y/libcompressgame/actions/runs/40309358931 . The Ubuntu 24.04 native job passed all 55 tests in 90.75 seconds using Python 3.12.15 and the maintained PyPI packages. The Windows 2022 job built the real codecs and passed both plain/encrypted PE self-extractor tests and all codec integrations. Its suite reported 53 passed, one Windows symlink-creation skip, and one CLI help failure: a decorative arrow could not be encoded when output was redirected under CP1252. The CLI now uses ASCII arrows; a subprocess regression checks every help command with `PYTHONIOENCODING=cp1252`. No user data is rewritten. The final corrected native CI run is linked from the repository Actions page. The earlier network/package restrictions below describe the previous run only.
 
 ## Earlier offline evidence — 2026-10-25
 
@@ -59,6 +59,6 @@ The shell cannot reach GitHub or PyPI. Upstream source was transferred through t
 - OpenZL 0.3.0 commit `32246b48faee46807f84183dac4db479089f5445`, genuine upstream zli and serial encoder/decoder. The offline build linked installed Zstd 1.5.7/LZ4 1.10.0 and disabled only the unused optional XGBoost trainer. The maintained build helper also disables that trainer but obtains normal upstream dependency sources.
 - Local Python hashing initially used an external temporary ctypes binding to the official BLAKE3 1.8.2 portable C source. All 35 upstream hash-mode vectors passed, with incremental input and extended output. Final full-suite/SFX tests used an external temporary ctypes binding to installed official `libblake3` **1.8.7**; the same 35 hash vectors passed. These temporary bindings are ignored testing infrastructure and are not shipped or substituted for the declared production dependency.
 
-The maintained PyPI dependency and fresh source-build-helper checks were subsequently completed in the current run above. Native Windows results are recorded there when available. The repository was archived during this earlier run; it has since been unarchived and published.
+The maintained PyPI dependency and fresh source-build-helper checks were subsequently completed in the current run above. Native Windows evidence and its initial help-encoding failure are recorded above. The repository was archived during this earlier run; it has since been unarchived and published.
 
 The new source and native fixture executables are reviewable locally. Fixture binaries contain test game data and test notices and are not production releases. Source/notice discovery metadata records identities and provenance; it is not an upstream publisher signature.
